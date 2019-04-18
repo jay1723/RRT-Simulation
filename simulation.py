@@ -8,6 +8,7 @@ pygame.init()
 winner_font = pygame.font.SysFont("Ubuntu", 30)
 ## Global Variables ##
 SIZE = (800,600)
+VALID_REGION(
 SOLUTION_FOUND = 0
 WHITE = (255,255,255)
 BLUE = (0,0,255)
@@ -21,6 +22,8 @@ GOAL = (600, 200)
 SAMPLE_GOAL_PROB = .05
 ######################
 
+
+    
 class Node:
     def __init__(self, x, y, parent):
         self.x = x
@@ -38,15 +41,16 @@ class Tree:
         return len(self.nodes)
 
 class Random_Sampler:
-    def __init__(self, xmax, ymax, goal):
+    def __init__(self, xmax, ymax, goal, goalBias):
         self.xmax = xmax
         self.ymax = ymax
         self.goal = goal
+        self.gb = goalBias
         
     # Samples random point or goal with some probability. 
     # Sampling goal with some probability was adapted from the OMPL implementation of RRT where they do the same. 
-    def sample(self):
-        if np.random.rand(1)[0] <= SAMPLE_GOAL_PROB:
+    def sample(self, bias=0.0):
+        if np.random.rand(1)[0] <= bias:
             return (goal.x, goal.y)
         else:
             xrand = np.random.rand(1)[0] * self.xmax
@@ -91,13 +95,19 @@ def highlight_solution(final_node):
         pygame.draw.line(screen, GREEN, (current.x, current.y), (current.parent.x, current.parent.y), 3)
         current = current.parent       
 
+def draw_dot(point):
+    circle = pygame.draw.circle(screen, BLUE, (point[0], point[1]), 1, 1)
+    pygame.display.update(circle)
 
-
+def draw_polygon(points):
+    pass
+    
+    
 pygame.display.set_caption("Sampling Simulation")
 screen = pygame.display.set_mode(SIZE)
 
 screen.fill(WHITE)
-
+pygame.display.flip()
 
 # Define start and goal, draw the start node to the screen
 root = Node(START[0], START[1], None)
@@ -105,31 +115,35 @@ end = Node(GOAL[0], GOAL[1], None)
 draw_node(end, screen, color=GREEN, size=5)
 draw_node(root, screen, color=BLUE, size=5)
 tree = Tree(root)
-sampler = Random_Sampler(SIZE[0], SIZE[1], end)
+sampler = Random_Sampler(SIZE[0], SIZE[1], end, SAMPLE_GOAL_PROB)
 
 while not SOLUTION_FOUND:
     for event in pygame.event.get():
         if event.type == pygame.QUIT : sys.exit()
-    
-    point = sampler.sample()
-    temp = Node(point[0], point[1], None)
-    nearest = nearest_node(temp, tree)
-    temp.parent = nearest
-    tree.nodes.append(temp)
-    draw_node(temp, screen)
-    if distance(temp, end) < 5:
-        end.parent = temp
-        SOLUTION_FOUND = True
-        draw_node(end, screen)
-        tsrf = winner_font.render("END FOUND", False, (0,0,0))
-        highlight_solution(end)
-        screen.blit(tsrf,(0,0))
-        pygame.display.flip()
-        pygame.time.delay(20000)
-        break
-    else:
-        pygame.display.flip()
-        val+= 1
+        if event.type == pygame.MOUSEBUTTONDOWN: 
+            pos = pygame.mouse.get_pos()
+            draw_dot(pos) 
+            
+            
+#    point = sampler.sample()
+#    temp = Node(point[0], point[1], None)
+#    nearest = nearest_node(temp, tree)
+#    temp.parent = nearest
+#    tree.nodes.append(temp)
+#    draw_node(temp, screen)
+#    if distance(temp, end) < 5:
+#        end.parent = temp
+#        SOLUTION_FOUND = True
+#        draw_node(end, screen)
+#        tsrf = winner_font.render("END FOUND", False, (0,0,0))
+#       highlight_solution(end)
+#        screen.blit(tsrf,(0,0))
+#        pygame.display.flip()
+#        pygame.time.delay(20000)
+#        break
+#    else:
+#        pygame.display.flip()
+      
     
     
 
