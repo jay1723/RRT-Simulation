@@ -58,20 +58,26 @@ while not SOLUTION_FOUND:
                 print("Collision detection")
                 RUN_SAMPLER = True
             elif reset_button.collidepoint(pos):
+                # Reset relevant global variables
                 START = sampler.sample()
                 GOAL = sampler.sample()
                 root = Node(START[0], START[1], None)
                 end = Node(GOAL[0], GOAL[1], None)
                 tree = Tree(root)
                 obstacles = Obstacles()
+                # Fill the screen with a blank screen
+                screen.fill(WHITE)
+                pygame.display.update()
+                # Redraw the starting points with the new data and redraw the buttons
                 draw_node(end, screen, color=GREEN, size=5)
                 draw_node(root, screen, color=BLUE, size=5)
-                screen.update(WHITE)
                 reset_button = pygame.draw.rect(screen, RED, (SIZE[0]/2, SIZE[1]-50, SIZE[0]/2, 50))
                 run_sampler_button = pygame.draw.rect(screen, GREEN, (0, SIZE[1]-50,SIZE[0]/2, 50))
                 screen.blit(ob_srf, (reset_button.left, reset_button.centery))
                 screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
+                pygame.display.update()
                 RUN_SAMPLER = False
+                print((root, end, len(obstacles.obstacles)))
             elif pos[0] < VALID_AREA[0] and pos[1] < VALID_AREA[1]: 
                 if not corner_pressed:
                     corner_pressed = True
