@@ -70,7 +70,7 @@ def draw_node(node, screen, color=gv.BLACK, linecolor=gv.RED, size=1):
     pygame.display.update(circle)
     if node.parent != None:
         pygame.draw.line(screen, linecolor, (node.x, node.y), (node.parent.x, node.parent.y))
-
+    return circle
 # Starting from the last node, highlight the solution path from start -> end
 def highlight_solution(final_node, screen):
     current = final_node
