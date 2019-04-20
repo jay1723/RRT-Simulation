@@ -2,6 +2,7 @@
 import pygame
 import sys
 
+
 from samplers import *
 from global_vars import *
 from helper_functions import *
@@ -19,12 +20,14 @@ pygame.display.set_caption("Sampling Simulation")
 screen = pygame.display.set_mode(SIZE)
 screen.fill(WHITE)
 
+
 # Create the buttons at the bottom of the screen
 reset_button = pygame.draw.rect(screen, RED, (SIZE[0]/2, SIZE[1]-50, SIZE[0]/2, 50))
 run_sampler_button = pygame.draw.rect(screen, GREEN, (0, SIZE[1]-50,SIZE[0]/2, 50))
 screen.blit(ob_srf, (reset_button.left, reset_button.centery))
 screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
 pygame.display.flip()
+
 
 
 # Define start and goal, draw the start node to the screen
@@ -39,8 +42,10 @@ draw_node(end, screen, color=GREEN, size=5)
 draw_node(root, screen, color=BLUE, size=5)
 
 
+
 # Action loop
 while not SOLUTION_FOUND:
+
     
     for event in pygame.event.get():
     # Quit event, close the program
