@@ -38,8 +38,8 @@ obstacles = Obstacles()
 sampler = Random_Sampler(VALID_AREA[0], VALID_AREA[1], end, SAMPLE_GOAL_PROB, obstacles)
 
 
-draw_node(end, screen, color=GREEN, size=5)
-draw_node(root, screen, color=BLUE, size=5)
+end_circle = draw_node(end, screen, color=GREEN, size=5)
+root_circle = draw_node(root, screen, color=BLUE, size=5)
 
 
 
@@ -82,7 +82,7 @@ while not SOLUTION_FOUND:
                 screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
                 pygame.display.update()
                 RUN_SAMPLER = False
-                print((root, end, len(obstacles.obstacles)))
+                
             elif pos[0] < VALID_AREA[0] and pos[1] < VALID_AREA[1]: 
                 if not corner_pressed:
                     corner_pressed = True
@@ -90,11 +90,22 @@ while not SOLUTION_FOUND:
                 else:
                     width = pos[0] - corner_pos[0]
                     height = pos[1] - corner_pos[1]
-                    rect = pygame.draw.rect(screen, BLUE, (corner_pos[0], corner_pos[1], width, height))
-                    print(rect.topleft, rect.width, rect.height)
-                    pygame.display.flip()
-                    obstacles.add_obstacle(rect)
-                    corner_pressed = False
+                    if (width < 0 and height < 0):
+                        obst = pygame.Rect(pos[0], pos[1], -width, -height)
+                    elif (width < 0 and height > 0):
+                        obst = pygame.Rect(pos[0], corner_pos[1], -width, height)
+                    elif (width > 0 and height < 0):
+                        obst = pygame.Rect(corner_pos[0], pos[1], width, -height)
+                    else:
+                        obst = pygame.Rect(corner_pos[0], corner_pos[1], width, height)
+                    if obst.colliderect(root_circle) or obst.colliderect(end_circle):
+                        corner_pressed = False
+                    else:
+                        rect = pygame.draw.rect(screen, BLUE, obst)
+                        #print(rect.topleft, rect.width, rect.height)
+                        pygame.display.flip()
+                        obstacles.add_obstacle(rect)
+                        corner_pressed = False
        
     if RUN_SAMPLER:
         if PLANNER == "RRT":
