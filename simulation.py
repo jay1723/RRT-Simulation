@@ -31,8 +31,9 @@ pygame.display.flip()
 root = Node(START[0], START[1], None)
 end = Node(GOAL[0], GOAL[1], None)
 tree = Tree(root)
-sampler = Random_Sampler(VALID_AREA[0], VALID_AREA[1], end, SAMPLE_GOAL_PROB)
 obstacles = Obstacles()
+sampler = Random_Sampler(VALID_AREA[0], VALID_AREA[1], end, SAMPLE_GOAL_PROB, obstacles)
+
 
 draw_node(end, screen, color=GREEN, size=5)
 draw_node(root, screen, color=BLUE, size=5)
@@ -55,7 +56,6 @@ while not SOLUTION_FOUND:
             pos = pygame.mouse.get_pos() 
             # If the button for running the planning algorithm was pressed then run the algorithm
             if run_sampler_button.collidepoint(pos):
-                print("Collision detection")
                 RUN_SAMPLER = True
             elif reset_button.collidepoint(pos):
                 # Reset relevant global variables
@@ -86,13 +86,15 @@ while not SOLUTION_FOUND:
                     width = pos[0] - corner_pos[0]
                     height = pos[1] - corner_pos[1]
                     rect = pygame.draw.rect(screen, BLUE, (corner_pos[0], corner_pos[1], width, height))
+                    print(rect.topleft, rect.width, rect.height)
                     pygame.display.flip()
                     obstacles.add_obstacle(rect)
                     corner_pressed = False
        
     if RUN_SAMPLER:
         if PLANNER == "RRT":
-            out = rrt(screen, sampler, root, end, tree)
+            print(tree.root)
+            out = rrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
                 winner_font = pygame.font.SysFont("Ubuntu", 30)

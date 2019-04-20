@@ -5,11 +5,47 @@ import math
 pygame.init()
 
 # Check whether a given sampled point, or edge connect node -> parent is in collision with obstacle. 
-def collision_detection(point, obstacles):
-    #pygame.draw.rect(screen, BLUE, (200, 200, 150, 50))
-    #points = [[100,140],[200,220],[310,250],[400,450]]
-    #pygame.draw.polygon(screen, BLUE, points)
-    pass
+# Modified from http://www.jeffreythompson.org/collision-detection/line-line.php
+# l1 = (x1, y1, x2, y2) same for l2
+def line_line_collision(l1, l2):
+    x1,y1,x2,y2 = l1
+    x3,y3,x4,y4 = l2
+    x1 = float(x1)
+    y1 = float(y1)
+    x2 = float(x2)
+    y2 = float(y2)
+    x3 = float(x3)
+    y3 = float(y3)
+    x4 = float(x4)
+    y4 = float(y4)
+    #print(x3,y3, x4,y4)
+    denominator = ((x2-x1) * (y4-y3)) - ((y2-y1)*(x4-x3))
+    numerator1 =  ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3))
+    numerator2 = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3))
+    if denominator == 0:
+        return (numerator1 == 0) and (numerator2 == 0)
+    A = numerator1 / denominator
+    B = numerator2 / denominator
+    
+    if A >= 0 and A <= 1 and B >= 0 and B <= 1:
+        return True
+    return False
+    
+# Box line collision detection modified from http://www.jeffreythompson.org/collision-detection/line-rect.php
+def collision_detection(p1, p2, obstacles):
+    x1,y1 = p1
+    x2,y2= p2
+    for obstacle in obstacles.obs:
+        rx,ry = obstacle.topleft
+        rw = obstacle.width
+        rh = obstacle.height
+        left = line_line_collision((x1,y1,x2,y2), (rx,ry,rx, ry+rh))
+        right = line_line_collision((x1,y1,x2,y2), (rx+rw,ry, rx+rw,ry+rh))
+        top = line_line_collision((x1,y1,x2,y2), (rx,ry, rx+rw,ry))
+        bottom = line_line_collision((x1,y1,x2,y2), (rx,ry+rh, rx+rw,ry+rh))
+        if left or right or top or bottom:
+            return True
+    return False
 
 # If the distance between a sampled point and its nearest neighbor is too large, linearly interpolate to calculate the best point
 def linear_interpolate(n1, n2, maxDistance):
