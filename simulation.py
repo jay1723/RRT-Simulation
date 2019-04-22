@@ -2,11 +2,11 @@
 import pygame
 import sys
 
-
-from samplers import *
+from rrt import *
+from rrt_one_side import *
 from global_vars import *
-from helper_functions import *
 from structures import *
+from helper_functions import *
 
 # Initialize PyGame and some font surfaces to be rendered to the screen later
 pygame.init()
@@ -44,14 +44,11 @@ root_circle = draw_node(root, screen, color=BLUE, size=5)
 
 
 # Action loop
-while not SOLUTION_FOUND:
-
-    
+while not SOLUTION_FOUND: 
     for event in pygame.event.get():
     # Quit event, close the program
         if event.type == pygame.QUIT:
             SOLUTION_FOUND = True
-            print(SOLUTION_FOUND)
             pygame.display.quit()
             pygame.quit()
             sys.exit()    
@@ -62,6 +59,7 @@ while not SOLUTION_FOUND:
             # If the button for running the planning algorithm was pressed then run the algorithm
             if run_sampler_button.collidepoint(pos):
                 RUN_SAMPLER = True
+                print("Run sampler")
             elif reset_button.collidepoint(pos):
                 # Reset relevant global variables
                 START = sampler.sample()
@@ -105,18 +103,39 @@ while not SOLUTION_FOUND:
                         #print(rect.topleft, rect.width, rect.height)
                         pygame.display.flip()
                         obstacles.add_obstacle(rect)
-                        corner_pressed = False
-       
+                        corner_pressed = False      
     if RUN_SAMPLER:
-        if PLANNER == "RRT":
-            print(tree.root)
-            out = rrt(screen, sampler, root, end, tree, obstacles)
+        if PLANNER == "RRT":            
+            out, cost = rrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
                 winner_font = pygame.font.SysFont("Ubuntu", 30)
-                tsrf = winner_font.render("END FOUND", False, (0,0,0))
+                tsrf = winner_font.render("Cost: %d" % cost, False, (0,0,0))
+                print(cost)
                 screen.blit(tsrf, (0,0))
                 SOLUTION_FOUND = out
+#                if SOLUTION_FOUND:
+#                    pygame.display.quit()
+#                    pygame.quit()
+#                    sys.exit()
+                RUN_SAMPLER = False
+        elif PLANNER == "RRT-ONE-SIDE":
+            out, cost = rrt_one_side(screen, sampler, root, end, tree, obstacles)
+            pygame.display.flip()
+            if out:
+                winner_font = pygame.font.SysFont("Ubuntu", 30)
+                tsrf = winner_font.render("Cost: %d" % cost, False, (0,0,0))
+                print(cost)
+                screen.blit(tsrf, (0,0))
+                SOLUTION_FOUND = True
+        elif PLANNER == "TEST-COLLISION":
+            out = test_collision(screen, sampler, root, end, tree, obstacles)
+            pygame.display.flip()
+            if out:
+                SOLUTION_FOUND = True  
+            continue
+            
+
             
 
 

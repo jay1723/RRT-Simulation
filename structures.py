@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from helper_functions import *
+from global_vars import *
 
 class Obstacles:
     def __init__(self):
@@ -13,8 +15,11 @@ class Node:
     def __init__(self, x, y, parent):
         self.x = x
         self.y = y
+        self.xy = (x,y)
         self.parent = parent
         # Potentially add cost here
+        self.cost = 0
+    
 
 class Tree:
     def __init__(self, root):
