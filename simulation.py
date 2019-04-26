@@ -44,7 +44,7 @@ root_circle = draw_node(root, screen, color=BLUE, size=5)
 
 
 # Action loop
-while not SOLUTION_FOUND: 
+while True:      
     for event in pygame.event.get():
     # Quit event, close the program
         if event.type == pygame.QUIT:
@@ -67,7 +67,7 @@ while not SOLUTION_FOUND:
                 root = Node(START[0], START[1], None)
                 end = Node(GOAL[0], GOAL[1], None)
                 tree = Tree(root)
-                obstacles = Obstacles()
+                obstacles.clear()
                 # Fill the screen with a blank screen
                 screen.fill(WHITE)
                 pygame.display.update()
@@ -80,7 +80,7 @@ while not SOLUTION_FOUND:
                 screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
                 pygame.display.update()
                 RUN_SAMPLER = False
-                
+                SOLUTION_FOUND = False
             elif pos[0] < VALID_AREA[0] and pos[1] < VALID_AREA[1]: 
                 if not corner_pressed:
                     corner_pressed = True
@@ -105,6 +105,8 @@ while not SOLUTION_FOUND:
                         obstacles.add_obstacle(rect)
                         corner_pressed = False      
     if RUN_SAMPLER:
+        if SOLUTION_FOUND:
+            continue
         if PLANNER == "RRT":            
             out, cost = rrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
@@ -124,15 +126,7 @@ while not SOLUTION_FOUND:
                 print(cost)
                 screen.blit(tsrf, (0,0))
                 SOLUTION_FOUND = True
-        elif PLANNER == "TEST-COLLISION":
-            out = test_collision(screen, sampler, root, end, tree, obstacles)
-            pygame.display.flip()
-            if out:
-                SOLUTION_FOUND = True  
-            continue
-            
 
-def main():
             
 
 

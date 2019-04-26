@@ -10,6 +10,9 @@ class Obstacles:
     def add_obstacle(self, points):
         self.obs.append(points)
     
+    def clear(self):
+       del self.obs[:]
+    
     
 class Node:
     def __init__(self, x, y, parent):
@@ -37,11 +40,14 @@ class Random_Sampler:
         self.goal = goal
         self.gb = goalBias
         self.obstacles = obstacles
-              
+        self.sampled_points = set()
+        
+          
     # Samples random point or goal with some probability. 
     # Sampling goal with some probability was adapted from the OMPL implementation of RRT where they do the same. 
     def sample(self):
         if np.random.rand(1)[0] <= self.gb:
+            self.sampled_points.add((self.goal.x, self.goal.y))
             return (self.goal.x, self.goal.y)
         else:
 
@@ -49,6 +55,8 @@ class Random_Sampler:
             while not valid_sample:
                 xrand = np.random.randint(1, self.xmax)
                 yrand = np.random.randint(1, self.ymax)
+                if (xrand, yrand) in self.sampled_points:
+                    continue
                 collision_found = False
                 # Make sure that the sampled point is not within an existing obstacle
                 for obstacle in self.obstacles.obs:
@@ -56,6 +64,7 @@ class Random_Sampler:
                         collision_found = True
                         break
                 if not collision_found:
+                    self.sampled_points.add((xrand, yrand))
                     return (xrand, yrand) 
                     
                 
