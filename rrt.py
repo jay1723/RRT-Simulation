@@ -5,18 +5,18 @@ from global_vars import *
 
 def rrt(screen, sampler, start, end, stree, etree, turn, obstacles):
     # Sample point in the Free Space
-    print("sampler")
+    #print("sampler")
     point = sampler.sample()
     temp = Node(point[0], point[1], None)
     # Find nearest node to that sampled point
-    print("nearest node")
+    #print("nearest node")
     nearest, dist = nearest_node(temp, tree)
-    print('collision detection')
+    #print('collision detection')
     collision_free = collision_detection(point, (nearest.x, nearest.y), obstacles)
     
     # Do collision detection on the point and resample if collision between point and nn exists
     while collision_free:
-        print("collision detection loop")
+        #print("collision detection loop")
         point = sampler.sample()
         temp = Node(point[0], point[1], None)
         nearest, dist = nearest_node(temp, tree)

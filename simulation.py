@@ -4,9 +4,11 @@ import sys
 
 from rrt import *
 from rrt_one_side import *
+from drrt import *
 from global_vars import *
 from structures import *
 from helper_functions import *
+
 
 # Initialize PyGame and some font surfaces to be rendered to the screen later
 pygame.init()
@@ -62,8 +64,9 @@ while True:
                 print("Run sampler")
             elif reset_button.collidepoint(pos):
                 # Reset relevant global variables
-                START = sampler.sample()
-                GOAL = sampler.sample()
+                sampler.clear()
+                #START = sampler.sample()
+                #GOAL = sampler.sample()
                 root = Node(START[0], START[1], None)
                 end = Node(GOAL[0], GOAL[1], None)
                 tree = Tree(root)
@@ -111,23 +114,26 @@ while True:
             out, cost = rrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                winner_font = pygame.font.SysFont("Ubuntu", 30)
-                tsrf = winner_font.render("Cost: %d" % cost, False, (0,0,0))
                 print(cost)
-                screen.blit(tsrf, (0,0))
                 SOLUTION_FOUND = out
-                RUN_SAMPLER = False
+
         elif PLANNER == "RRT-ONE-SIDE":
             out, cost = rrt_one_side(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                winner_font = pygame.font.SysFont("Ubuntu", 30)
-                tsrf = winner_font.render("Cost: %d" % cost, False, (0,0,0))
                 print(cost)
-                screen.blit(tsrf, (0,0))
                 SOLUTION_FOUND = True
 
-            
+        elif PLANNER == "DRRT":
+            out, cost = drrt(screen, sampler, root, end, tree, obstacles)
+            pygame.display.flip()
+            if out:
+                print(cost)
+                SOLUTION_FOUND = True
+
+
+
+
 
 
 

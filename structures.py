@@ -13,16 +13,26 @@ class Obstacles:
     def clear(self):
        del self.obs[:]
     
-    
+
+# From paper: x_n = (x,y), parent, list of children, cost from start to n, list of nearest neighbors
 class Node:
     def __init__(self, x, y, parent):
         self.x = x
         self.y = y
         self.xy = (x,y)
         self.parent = parent
-        # Potentially add cost here
+        self.children = set()
+        self.nearest = set()
         self.cost = 0
-    
+        
+    def get_descendents(self):
+        if len(self.children) == 0:
+            return [self]
+        else:
+            out = []
+            for node in self.children:
+                out += [node] + get_descendents(node)
+        return out
 
 class Tree:
     def __init__(self, root):
@@ -41,18 +51,26 @@ class Random_Sampler:
         self.gb = goalBias
         self.obstacles = obstacles
         self.sampled_points = set()
+        self.count = 0
+    
+    def clear(self):
+        self.sampled_points.clear()
+        self.count = 0
+        self.gb = SAMPLE_GOAL_PROB
         
           
     # Samples random point or goal with some probability. 
-    # Sampling goal with some probability was adapted from the OMPL implementation of RRT where they do the same. 
     def sample(self):
+        # As more nodes are added, make sure to increase the goal bias
+        if self.count == 1000:
+            self.gb += .005
+            self.count = 0
+            print(self.gb)
         if np.random.rand(1)[0] <= self.gb:
             self.sampled_points.add((self.goal.x, self.goal.y))
             return (self.goal.x, self.goal.y)
         else:
-
-            valid_sample = False
-            while not valid_sample:
+            while True:
                 xrand = np.random.randint(1, self.xmax)
                 yrand = np.random.randint(1, self.ymax)
                 if (xrand, yrand) in self.sampled_points:
@@ -65,6 +83,8 @@ class Random_Sampler:
                         break
                 if not collision_found:
                     self.sampled_points.add((xrand, yrand))
+                    self.count += 1
+                    
                     return (xrand, yrand) 
                     
                 

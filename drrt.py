@@ -6,39 +6,60 @@ from global_vars import *
 #DRRT Algorithm
 
 def drrt(screen, sampler, start, end, tree, obstacles):
-    print("sample")
     # Sample point in the Free Space
+    queue = []
     point = sampler.sample()
     temp = Node(point[0], point[1], None)
     # Find nearest node to that sampled point
-    print("nearest node")
     nearest, dist = nearest_node(temp, tree)
-    print('collision free')
     collision_free = collision_detection(point, (nearest.x, nearest.y), obstacles)
     
     # Do collision detection on the point and resample if collision between point and nn exists
-    print('collision loop')
     while collision_free:
-        print("collision detection loop")
         point = sampler.sample()
         temp = Node(point[0], point[1], None)
         nearest, dist = nearest_node(temp, tree)
         collision_free = collision_detection(point, (nearest.x, nearest.y), obstacles)
-        print(point, nearest, dist, collision_free)
-    print("exited collision detection")
-    # draw the node and connect it to the edge and add it to the tree
+    # Link the temp node to its expected parent and update its cost
     temp.parent = nearest
-    temp.cost = dist + temp.parent.cost
+    temp.parent.children.add(temp)
+    temp.cost = distance(temp, temp.parent) + temp.parent.cost
+    update_nearest_nodes(temp, tree, obstacles)
+    # Optimize the parent to be the nearest nbh that minimizes the total cost for the new node
+    t = temp.parent.xy
+    c = temp.cost
+
+    optimize_parent(temp)
+#    if temp.parent.xy != t:
+#        print(t, temp.parent.xy, c, temp.cost)
     tree.nodes.append(temp)
-    draw_node(temp, screen)
+    # Get the branch, which is just the internal nodes from leaf -> root
+    b = branch(temp, tree.root)
+    #if temp.parent.xy != t:
+    #    print([e.xy for e in b])
+    # Perform gradient descent on the branch
+    #gradient_descent(b)
+    # Add the internal nodes in the branches to the queue
+    #for el in b:
+    #    queue.append(el)
+    #propogate_changes()
     
     # If the node is within the goal threshold draw the node and path back to start and end the simulation
+    
     if distance(temp, end) < 5:
+        print("I am here")
         end.parent = temp
-        end.cost = temp.cost + distance(temp,end)
-        SOLUTION_FOUND = True
-        draw_node(end, screen)
+        end.parent.children.add(end)
+        end.cost = end.parent.cost + distance(end.parent,end)
+        update_nearest_nodes(end, tree, obstacles)
+        optimize_parent(end)
+        b = branch(end, tree.root)
+        print(end.cost, [e.cost for e in b])
+        tree.nodes.append(end)
+        #SOLUTION_FOUND = True
+        draw_all_nodes(tree, screen)
         highlight_solution(end, screen)
         pygame.display.flip()
         return True, end.cost
     return False, end.cost
+    
