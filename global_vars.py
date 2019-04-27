@@ -2,7 +2,7 @@
 SIZE = (800,650)
 VALID_AREA = (800, 600)
 SOLUTION_FOUND = False
-PLANNER = "DRRT" # (RRT, RRT-ONE-SIDE, DRRT)
+PLANNER = "ROS" # (RRT, ROS, DRRT)
 RUN_SAMPLER = False
 ## COLORS ##
 WHITE = (255,255,255)
@@ -21,6 +21,7 @@ MAX_LENGTH = 50.0
 ## Gradient Descent ##
 alpha = 0.01
 radius = 50
+g_desc_rad = 25
 
 ## Obstacle Events ###
 corner_pressed = False

@@ -73,7 +73,13 @@ def propogate_changes(q):
             c.cost = el.cost + distance(el, c)
             q.append(c)
         
-
+def get_sampling_range(x, y, rad):
+    x_start = max(0, x-rad)
+    y_start = max(0,y-rad)
+    x_end = min(VALID_AREA[0], x + rad)
+    y_end = min(VALID_AREA[1], y + rad)
+    return (x_start, y_start), (x_end, y_end)
+    
 def draw_all_nodes(tree, screen):
     for node in tree.nodes:
         draw_node(node, screen)
@@ -104,7 +110,29 @@ def optimize_parent(node):
 def sum_costs(tree):
     pass
 
+def gradient_descent_approx(b, obstacles):
+    b_copy = b[:]
+    for node in b[::-1]:
+        xs, ys, xe, ye = get_sampling_range(b.x, b.y, g_desc_rand)
+        for x in range(xs, xe):
+            for y in range(ys, ye):
+                pass
+                
+def cost_with_new_sample(node_to_replace, new_sample):
+    desc = node_to_replace.get_descendents()
+    parent = node.parent
+    
 def gradient_descent(b):
+    b_copy = b[:]
+    for node in b:
+        # Do the gradient descent
+        t = 1
+        while 
+        continue
+    for i in range(len(b)):
+        if b[i] != b_copy[i]:
+            # Update in nearest neighbor datastructure
+            continue
     pass
 
 def isLeaf(node):

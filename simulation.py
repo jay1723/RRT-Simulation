@@ -4,6 +4,7 @@ import sys
 
 from rrt import *
 from rrt_one_side import *
+from rrt_optimize_parent import *
 from drrt import *
 from global_vars import *
 from structures import *
@@ -117,13 +118,19 @@ while True:
                 print(cost)
                 SOLUTION_FOUND = out
 
-        elif PLANNER == "RRT-ONE-SIDE":
+        elif PLANNER == "ROS":
             out, cost = rrt_one_side(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
                 print(cost)
                 SOLUTION_FOUND = True
 
+        elif PLANNER == "ROP":
+            out, cost = rrt_optimize_parent(screen, sampler, root, end, tree, obstacles)
+            pygame.display.flip()
+            if out:
+                print(cost)
+                SOLUTION_FOUND = True
         elif PLANNER == "DRRT":
             out, cost = drrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
