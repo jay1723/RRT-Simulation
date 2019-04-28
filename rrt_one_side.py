@@ -1,7 +1,7 @@
 from structures import *
 from helper_functions import *
 
-# Rapidly Exploring Random Tree Algorithm
+# Rapidly Exploring Random Tree Algorithm growing from start -> goal
 def rrt_one_side(screen, sampler, start, end, tree, obstacles):
     #print("sample")
     # Sample point in the Free Space
@@ -21,18 +21,20 @@ def rrt_one_side(screen, sampler, start, end, tree, obstacles):
         temp = Node(point[0], point[1], None)
         nearest, dist = nearest_node(temp, tree)
         collision_free = collision_detection(point, (nearest.x, nearest.y), obstacles)
-        print(point, nearest, dist, collision_free)
+        #print(point, nearest, dist, collision_free)
     #print("exited collision detection")
     # draw the node and connect it to the edge and add it to the tree
     temp.parent = nearest
-    temp.cost = dist + temp.parent.cost
+    temp.parent.children.add(temp)
+    temp.cost = distance(temp, temp.parent) + temp.parent.cost
     tree.nodes.append(temp)
     draw_node(temp, screen)
     
     # If the node is within the goal threshold draw the node and path back to start and end the simulation
     if distance(temp, end) < 5:
         end.parent = temp
-        end.cost = temp.cost + distance(temp,end)
+        end.parent.children.add(end)
+        end.cost = end.parent.cost + distance(end.parent,end)
         SOLUTION_FOUND = True
         draw_node(end, screen)
         highlight_solution(end, screen)

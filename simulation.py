@@ -31,18 +31,35 @@ screen.blit(ob_srf, (reset_button.left, reset_button.centery))
 screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
 pygame.display.flip()
 
-
-
-# Define start and goal, draw the start node to the screen
-root = Node(START[0], START[1], None)
-end = Node(GOAL[0], GOAL[1], None)
-tree = Tree(root)
 obstacles = Obstacles()
-sampler = Random_Sampler(VALID_AREA[0], VALID_AREA[1], end, SAMPLE_GOAL_PROB, obstacles)
+if sparse_test:
+    obstacles.add_obstacle(pygame.Rect(100,100, 200, 100))
+    obstacles.add_obstacle(pygame.Rect(300,350,200,100))
+    obstacles.add_obstacle(pygame.Rect(500,100, 200, 200))
+    obstacles.add_obstacle(pygame.Rect(100, 500, 200, 100))
+    draw_obstacles(screen, obstacles)
+    root = Node(0, VALID_AREA[1], None)
+    end = Node(VALID_AREA[0], 0, None)
+    tree = Tree(root)
+elif narrow_test:
+    # Define Narrow Obstacles for Testing    
+    obstacles.add_obstacle(pygame.Rect(VALID_AREA[0]/4, 0, VALID_AREA[0]/2, VALID_AREA[1]/2-10))
+    obstacles.add_obstacle(pygame.Rect(VALID_AREA[0]/4, VALID_AREA[1]/2, VALID_AREA[0]/2, VALID_AREA[1]/2))
+    draw_obstacles(screen, obstacles)
+    root = Node(0, VALID_AREA[1], None)
+    end = Node(VALID_AREA[0], 0, None)
+    tree = Tree(root)
+else:
+# Define start and goal, draw the start node to the screen
+    root = Node(START[0], START[1], None)
+    end = Node(GOAL[0], GOAL[1], None)
+    tree = Tree(root)
 
+sampler = Random_Sampler(VALID_AREA[0], VALID_AREA[1], end, SAMPLE_GOAL_PROB, obstacles)
 
 end_circle = draw_node(end, screen, color=GREEN, size=5)
 root_circle = draw_node(root, screen, color=BLUE, size=5)
+
 
 
 
@@ -62,7 +79,7 @@ while True:
             # If the button for running the planning algorithm was pressed then run the algorithm
             if run_sampler_button.collidepoint(pos):
                 RUN_SAMPLER = True
-                print("Run sampler")
+                print("Run sampler %s" % PLANNER)
             elif reset_button.collidepoint(pos):
                 # Reset relevant global variables
                 sampler.clear()
@@ -83,6 +100,8 @@ while True:
                 screen.blit(ob_srf, (reset_button.left, reset_button.centery))
                 screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
                 pygame.display.update()
+                print(root.xy, end.xy, tree.num_nodes(), len(obstacles.obs))
+                narrow_test = False
                 RUN_SAMPLER = False
                 SOLUTION_FOUND = False
             elif pos[0] < VALID_AREA[0] and pos[1] < VALID_AREA[1]: 
@@ -111,26 +130,21 @@ while True:
     if RUN_SAMPLER:
         if SOLUTION_FOUND:
             continue
-        if PLANNER == "RRT":            
-            out, cost = rrt(screen, sampler, root, end, tree, obstacles)
-            pygame.display.flip()
-            if out:
-                print(cost)
-                SOLUTION_FOUND = out
-
+        # RRT One Side
         elif PLANNER == "ROS":
             out, cost = rrt_one_side(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
                 print(cost)
                 SOLUTION_FOUND = True
-
+        # Optimize Parent RRT variant
         elif PLANNER == "ROP":
             out, cost = rrt_optimize_parent(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
                 print(cost)
                 SOLUTION_FOUND = True
+        # DRRT Variant
         elif PLANNER == "DRRT":
             out, cost = drrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()

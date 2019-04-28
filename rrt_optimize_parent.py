@@ -3,8 +3,6 @@ from helper_functions import *
 from rrt_hf import *
 from global_vars import *
 
-#DRRT Algorithm
-
 def rrt_optimize_parent(screen, sampler, start, end, tree, obstacles):
     # Sample point in the Free Space
     queue = []
@@ -25,11 +23,12 @@ def rrt_optimize_parent(screen, sampler, start, end, tree, obstacles):
     temp.parent.children.add(temp)
     temp.cost = distance(temp, temp.parent) + temp.parent.cost
     update_nearest_nodes(temp, tree, obstacles)
+
     # Optimize the parent to be the nearest nbh that minimizes the total cost for the new node
     t = temp.parent.xy
     c = temp.cost
 
-    optimize_parent(temp)
+    optimize_parent(temp, obstacles)
 #    if temp.parent.xy != t:
 #        print(t, temp.parent.xy, c, temp.cost)
     tree.nodes.append(temp)
@@ -44,7 +43,7 @@ def rrt_optimize_parent(screen, sampler, start, end, tree, obstacles):
         end.parent.children.add(end)
         end.cost = end.parent.cost + distance(end.parent,end)
         update_nearest_nodes(end, tree, obstacles)
-        optimize_parent(end)
+        optimize_parent(end, obstacles)
         b = branch(end, tree.root)
         print(end.cost, [e.cost for e in b])
         tree.nodes.append(end)

@@ -1,4 +1,4 @@
-import global_vars as gv
+from global_vars import *
 import pygame
 import math
 
@@ -34,16 +34,9 @@ def line_line_collision(l1, l2):
         iY = y1 + (A * (y2-y1))
         return True, iX, iY
     return False, 100000, 100000 # Change these values to sys.maxsize if the size of board > 10^5
-#    if den == 0:
-#        return (numerator1 == 0) and (numerator2 == 0)
-#    A = numerator1 / denominator
-#    B = numerator2 / denominator
-    
-#    if A >= 0 and A <= 1 and B >= 0 and B <= 1:
-#        return True
-#    return False
     
 # Box line collision detection modified from http://www.jeffreythompson.org/collision-detection/line-rect.php
+# Returns true if there is a collision between the line and the rectangle
 def line_rect_collision(p1,p2, rect):
     x1,y1 = p1
     x2,y2= p2
@@ -59,9 +52,6 @@ def line_rect_collision(p1,p2, rect):
         
     return False, (100000, 100000), (100000, 100000), (100000, 100000), (100000, 100000)
 
-def round(point):
-    return int(point + .5)
-   
 # Returns true if a collision is detected between line and any obstacle in the simulation
 def collision_detection(p1, p2, obstacles):
     for obstacle in obstacles.obs:
@@ -69,10 +59,16 @@ def collision_detection(p1, p2, obstacles):
         if col[0]:
             return True
     return False
-
-def cost(node):
-    return node.cost
     
+    
+def round(point):
+    return int(point + .5)
+   
+def draw_obstacles(screen, obstacles):
+    for ob in obstacles.obs:
+        pygame.draw.rect(screen, BLUE, ob)
+        pygame.display.update()
+
 
 # Euclidean distance
 def distance(n1, n2):
@@ -102,7 +98,7 @@ def midpoint(p1, p2):
     return (int(abs(x2 + x1) / 2),int(abs(y2 + y1) / 2))
     
 # Draw the node to the screen and if the node has a parent, draw a line between the two
-def draw_node(node, screen, color=gv.BLACK, linecolor=gv.RED, size=1):
+def draw_node(node, screen, color=BLACK, linecolor=RED, size=DOT_SIZE):
     circle = pygame.draw.circle(screen, color, (node.x, node.y), size, size)
     pygame.display.update(circle)
     if node.parent != None:
@@ -112,12 +108,12 @@ def draw_node(node, screen, color=gv.BLACK, linecolor=gv.RED, size=1):
 def highlight_solution(final_node, screen):
     current = final_node
     while current.parent != None:
-        pygame.draw.line(screen, gv.GREEN, (current.x, current.y), (current.parent.x, current.parent.y), 3)
+        pygame.draw.line(screen, GREEN, (current.x, current.y), (current.parent.x, current.parent.y), 3)
         current = current.parent  
        
 
 def draw_dot(point, screen):
-    circle = pygame.draw.circle(screen, gv.BLUE, (point[0], point[1]), 1, 1)
+    circle = pygame.draw.circle(screen, BLUE, (point[0], point[1]), 1, 1)
     pygame.display.update(circle)
 
 def draw_polygon(points):
