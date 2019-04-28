@@ -86,6 +86,7 @@ def check_point_in_obstacles(point, obstacles):
         if o.collidepoint(point):
             return True
     return False
+    
 def get_new_cost(tnode, parent, child):
     return parent.cost + distance(tnode, parent) + distance(child, tnode)
 
@@ -170,10 +171,15 @@ def optimize_parent(node, obstacles):
     node.parent.children.add(node) # Add the node to the children's set of the parent. Note that this may be the same parent from before
     
     node.cost = current # Update the cost of the new node
-    
-def sum_costs(tree):
-    pass
 
+def highlight_solution_with_collision_print(final_node, screen, obstacles):
+    current = final_node
+    count = 1
+    while current.parent != None:
+        print(count, collision_detection(current.xy, current.parent.xy, obstacles))
+        count += 1
+        pygame.draw.line(screen, GREEN, (current.x, current.y), (current.parent.x, current.parent.y), 3)
+        current = current.parent  
 def gradient_descent_approx(b, obstacles):
     b_copy = b[:]
     for node in b[::-1]:

@@ -22,7 +22,7 @@ MAX_LENGTH = 50.0
 ## Gradient Descent ##
 alpha = 0.01
 radius = 50
-g_desc_rad = 25
+g_desc_rad = 10
 
 ## Obstacle Events ###
 corner_pressed = False

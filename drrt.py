@@ -50,15 +50,23 @@ def drrt(screen, sampler, start, end, tree, obstacles):
         end.parent = temp
         end.parent.children.add(end)
         end.cost = end.parent.cost + distance(end.parent,end)
-        update_nearest_nodes(end, tree, obstacles)
+        #update_nearest_nodes(end, tree, obstacles)
         optimize_parent(end, obstacles)
         b = branch(end, tree.root)
         b_copy = optimize_branch(b, tree, obstacles)
+        found_diff = False
+        for i in range(len(b_copy)):
+            if found_diff:
+                break
+            if b_copy[i].xy != b[i].xy:
+                update_tree_costs(tree)
+                found_diff = True
         print(end.cost, [e.cost for e in b])
+        
         tree.nodes.append(end)
         #SOLUTION_FOUND = True
         draw_all_nodes(tree, screen)
-        highlight_solution(end, screen)
+        highlight_solution_with_collision_print(end, screen, obstacles)
         pygame.display.flip()
         return True, end.cost
     return False, end.cost
