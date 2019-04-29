@@ -142,21 +142,21 @@ while True:
             out, cost = rrt_one_side(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                print("RESULTS: ", len(tree.nodes), cost)
+                print("RESULTS: ", "Node", len(tree.nodes), "Cost", cost)
                 SOLUTION_FOUND = True
         # Optimize Parent RRT variant
         elif PLANNER == "ROP":
             out, cost = rrt_optimize_parent(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                print("RESULTS: ", len(tree.nodes), cost)
+                print("RESULTS: ", "Node", len(tree.nodes), "Cost", cost)
                 SOLUTION_FOUND = True
         # DRRT Variant
         elif PLANNER == "DRRT":
             out, cost = drrt(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                print(cost)
+                print("RESULTS: ", "Node", len(tree.nodes), "Cost", cost)
                 SOLUTION_FOUND = True
 
 
