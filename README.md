@@ -28,7 +28,8 @@ If this does not work please individually install:
 * After you exit the simulation you should see a line in the terminal that outputs the number of nodes and the total cost of the path for the given path. 
 
 ## GITHUB
-https://github.com/jay1723/RRT-Simulation/tree/handin
+https://github.com/jay1723/RRT-Simulation
+* Images are also available here in the `images/` folder on the master branch
 
 ## Sources:
 * [Line/Line collision detection logic](http://www.jeffreythompson.org/collision-detection/line-line.php)
