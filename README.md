@@ -33,4 +33,4 @@ https://github.com/jay1723/RRT-Simulation/tree/handin
 ## Sources:
 * [Line/Line collision detection logic](http://www.jeffreythompson.org/collision-detection/line-line.php)
 * [Box/Line collision detection logic](http://www.jeffreythompson.org/collision-detection/line-rect.php)
-* [LaTex help](https://tex.stackexchange.com/questions/219816/algorithm-in-ieee-format\)
+* [LaTex help](https://tex.stackexchange.com/questions/219816/algorithm-in-ieee-format)
