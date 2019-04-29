@@ -81,10 +81,11 @@ def nearest_node(node, tree):
     nearest = tree.root
     dist = 0
     for neighbor in tree.nodes:
-        tmp = distance(neighbor,node)
-        if tmp < distance(nearest, node):
+        neighbor_to_node = distance(neighbor,node)
+        nearest_to_node = distance(nearest, node)
+        if neighbor_to_node < nearest_to_node:
             nearest = neighbor
-            dist = tmp
+            dist = neighbor_to_node
     return nearest, dist
 
 # Return midpoint of a line. Input is Tuples (x,y)

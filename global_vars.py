@@ -2,7 +2,7 @@
 SIZE = (800,650)
 VALID_AREA = (800, 600)
 SOLUTION_FOUND = False
-PLANNER = "DRRT" # (ROS, ROP, DRRT)
+PLANNER = "ROP" # (ROS, ROP, DRRT)
 RUN_SAMPLER = False
 ## COLORS ##
 WHITE = (255,255,255)
@@ -30,5 +30,6 @@ corner_pos = (0,0)
 
 
 ### Testing Events ###
-narrow_test = False
-sparse_test = True
+narrow_test = True
+sparse_test = False
+sparse_test2 = False

@@ -32,11 +32,22 @@ screen.blit(smpl_srf, (run_sampler_button.left, run_sampler_button.centery))
 pygame.display.flip()
 
 obstacles = Obstacles()
+
 if sparse_test:
     obstacles.add_obstacle(pygame.Rect(100,100, 200, 100))
     obstacles.add_obstacle(pygame.Rect(300,350,200,100))
+    obstacles.add_obstacle(pygame.Rect(500,50, 200, 200))
+    obstacles.add_obstacle(pygame.Rect(100, 500, 200, 100))
+    draw_obstacles(screen, obstacles)
+    root = Node(START[0], START[1], None)
+    end = Node(GOAL[0], GOAL[1], None)
+    tree = Tree(root)
+elif sparse_test2:
+    obstacles.add_obstacle(pygame.Rect(25,100, 200, 100))
+    obstacles.add_obstacle(pygame.Rect(300,350,200,100))
     obstacles.add_obstacle(pygame.Rect(500,100, 200, 200))
     obstacles.add_obstacle(pygame.Rect(100, 500, 200, 100))
+    obstacles.add_obstacle(pygame.Rect(150, 200, 100, 100))
     draw_obstacles(screen, obstacles)
     root = Node(0, VALID_AREA[1], None)
     end = Node(VALID_AREA[0], 0, None)
@@ -135,14 +146,14 @@ while True:
             out, cost = rrt_one_side(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                print(cost)
+                print("RESULTS: ", len(tree.nodes), cost)
                 SOLUTION_FOUND = True
         # Optimize Parent RRT variant
         elif PLANNER == "ROP":
             out, cost = rrt_optimize_parent(screen, sampler, root, end, tree, obstacles)
             pygame.display.flip()
             if out:
-                print(cost)
+                print("RESULTS: ", len(tree.nodes), cost)
                 SOLUTION_FOUND = True
         # DRRT Variant
         elif PLANNER == "DRRT":

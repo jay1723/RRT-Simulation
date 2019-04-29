@@ -89,8 +89,8 @@ class Random_Sampler:
             return (self.goal.x, self.goal.y)
         else:
             while True:
-                xrand = np.random.randint(1, self.xmax)
-                yrand = np.random.randint(1, self.ymax)
+                xrand = np.random.randint(0, self.xmax)
+                yrand = np.random.randint(0, self.ymax)
                 if (xrand, yrand) in self.sampled_points:
                     continue
                 collision_found = False
