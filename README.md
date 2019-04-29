@@ -26,6 +26,10 @@ If this does not work please individually install:
 * To create obstacles simply click once for where you want the top left corner of the obstacle to be and click again to select where you want the bottom right of the obstacle to be. 
 * Those are all of the basic features of the simulator as of right now. 
 * After you exit the simulation you should see a line in the terminal that outputs the number of nodes and the total cost of the path for the given path. 
+
+## GITHUB
+https://github.com/jay1723/RRT-Simulation/tree/handin
+
 ## Sources:
 * [Line/Line collision detection logic](http://www.jeffreythompson.org/collision-detection/line-line.php)
 * [Box/Line collision detection logic](http://www.jeffreythompson.org/collision-detection/line-rect.php)
