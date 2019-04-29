@@ -2,7 +2,7 @@
 SIZE = (800,650)
 VALID_AREA = (800, 600)
 SOLUTION_FOUND = False
-PLANNER = "ROP" # (ROS, ROP, DRRT)
+PLANNER = "ROP" # (ROS, ROP, DRRT) Edit this when you want to change planners
 RUN_SAMPLER = False
 ## COLORS ##
 WHITE = (255,255,255)

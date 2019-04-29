@@ -39,7 +39,7 @@ def get_nearest_obstacle_collision(point, nearest, obstacles):
 def branch(node, root):
     if node.parent == root:
         return []
-    # node = node.parent / Uncomment if you don't want to include the leaf node
+    # node = node.parent / Uncomment to remove the leaf node from branch
     tmp = []
     while node.parent != None:
         tmp.insert(0, node) # Pushes onto the list so they are in the correct order
@@ -48,11 +48,8 @@ def branch(node, root):
 
 # Modifies the branch and returns a copy of the original branch to make propogating the changes easier
 def optimize_branch(branch, tree, obstacles):
-    
-    print("optimize branch")
     b_copy = [n.copy() for n in branch]
     for i in range(len(branch)-1):
-        print(i, len(branch[i].children))
         cnode = branch[i]
         childs = find_children(tree, cnode)
         child = branch[i+1]
@@ -66,21 +63,15 @@ def optimize_branch(branch, tree, obstacles):
                 tnode.nearest = cnode.nearest
                 n_cost = get_new_cost(tnode, cnode.parent, child)
                 diff = child.cost - n_cost    
-                if n_cost < child.cost:
-                    
-                    print("found smaller cost")
-                    collides_with_descendent = False
-                    
+                if n_cost < child.cost:                    
+                    collides_with_descendent = False                   
                     for c in childs:
-                        # print(len(cnode.children), len(tnode.children), len(tree.nodes))
                         if collision_detection(c.xy, tnode.xy, obstacles):
-                            # print("child collision detected", c.xy, tnode.xy)
                             collides_with_descendent = True
                             break
                     if collides_with_descendent:
                         continue
                     elif not collision_detection(tnode.xy, child.xy, obstacles):
-                        print("no collisions detected with new point")
                         curr_best_x = x_i
                         curr_best_y = y_i
                         oldxy = cnode.xy
@@ -90,7 +81,6 @@ def optimize_branch(branch, tree, obstacles):
                         cnode.cost = cnode.parent.cost + distance(cnode, cnode.parent)
                         child.cost = child.parent.cost + distance(child, child.parent)
                         update_remaining_branch(diff, branch, i+1)  
-                        print(occ, child.cost, oldxy, cnode.xy)
     return b_copy
 
 def find_children(tree, node):
@@ -99,10 +89,10 @@ def find_children(tree, node):
         if n.parent == node:
             tmp.append(n)
     return tmp
+    
 def update_children(tree):
     for node in tree.nodes:
         node.children.clear()
-    
     for node in tree.nodes:
         if node.parent!= None:
             node.parent.children.add(node)
@@ -121,14 +111,6 @@ def check_point_in_obstacles(point, obstacles):
 def get_new_cost(tnode, parent, child):
     return parent.cost + distance(tnode, parent) + distance(child, tnode)
 
-# def update_tree(tnode):
-    # children = list(tnode.children)
-    # while len(children) != 0:
-        # for c in children:
-            # c.cost = c.parent.cost + distance(c.parent, c)
-            # for child in c.children:
-                # children.append(child)
-
 def update_remaining_branch(diff, branch, index):
     for i in range(index, len(branch)):
         n = branch[i]
@@ -136,10 +118,6 @@ def update_remaining_branch(diff, branch, index):
         
     
 def update_nearest_nodes(node, tree, obstacles):
-    # for n in node.nearest:
-        # if distance(n, node) > radius:
-            # n.nearest.remove(node)
-            # node.nearest.remove(n)
     for n in tree.nodes:
         if distance(node, n) < radius:
             # Only add nearest neighbors that are collision free
@@ -147,25 +125,6 @@ def update_nearest_nodes(node, tree, obstacles):
                 n.nearest.add(node)
                 node.nearest.add(n)
 
-            
-        
- 
-# def propogate_changes(q):
-    # while len(q) != 0:
-    # # always pop the smallest cost item off the queue
-        # q.sort(key=lambda n: n.cost)
-        # el = q.pop(0)
-        # # key stuff not implemented rn
-        # # if key(el) > best_cost then
-        # #    break
-        # for nbh in el.nearest:
-            # if nbh.cost > el.cost + distance(el, nbh):
-                # nbh.cost = el.cost + distance(el, nbh)
-                # nbh.parent = el
-                # q.append(nbh)
-        # for c in el.get_descendents:
-            # c.cost = el.cost + distance(el, c)
-            # q.append(c)
         
 def get_sampling_range(x, y, rad):
     x_start = max(0, x-rad)
@@ -183,32 +142,11 @@ def update_children(node):
     while temp.parent != None:
         temp.parent.children.add(node)
         temp = temp.parent
-        
-
-    
-# def optimize_parent(node, obstacles,tree):
-    # current_best_cost = node.cost
-    # current_best_parent = node.parent # Current parent assigned to node
-    # node.parent.children.remove(node) # Remove the node from the parent's children before calculating new parent 
-    # update_nearest_nodes(node.parent, tree, obstacles) # Update the nearest neighbors list for the parent
-    # update_children()
-    # for n in node.parent.nearest:
-        # if n.xy == node.xy:
-            # continue
-        # if n.cost + distance(n, node) < current_best_cost:
-            # if not collision_detection(n.xy, node.xy, obstacles):
-                # current_best_parent = n
-                # current_best_cost = n.cost + distance(n,node)
-    
-    # node.parent = current_best_parent
-    # node.parent.children.add(node)
-    # node.cost = current_best_cost
 
 def optimize_parent(node, obstacles):
     current = node.cost # Current distance
     parent = node.parent # Current parent assigned to node
     node.parent.children.remove(node) # Remove the node from the parent's children before calculating new parent 
-    children = node.parent.children
     
     for nbh in node.parent.nearest:
         # The child node might be in the nearest neighbor list so don't do nearest neighbor with itself.
@@ -224,6 +162,29 @@ def optimize_parent(node, obstacles):
     
     node.cost = current # Update the cost of the new node
     
+# def optimize_parent(node, obstacles):
+    # # Current distance and parent
+    # current = node.cost 
+    # parent = node.parent 
+    # # Remove the node from the parent's children before calculating new parent 
+    # node.parent.children.remove(node) 
+    # children = node.parent.children
+    
+    # for nbh in node.parent.nearest:
+        # # The child node might be in the nearest neighbor list so don't do nearest neighbor with itself.
+        # if nbh.xy == node.xy:
+            # continue
+        # if distance(nbh, node) + nbh.cost < current:
+            # if not collision_detection(node.xy, nbh.xy, obstacles):
+                # current = distance(nbh, node) + nbh.cost
+                # parent = nbh
+    # # Set the new parent
+    # node.parent = parent
+    # node.parent.children.add(node) 
+    
+    # # Update the cost of the new node 
+    # node.cost = current 
+    
 def highlight_solution_with_collision_print(final_node, screen, obstacles):
     current = final_node
     count = 1
@@ -232,38 +193,7 @@ def highlight_solution_with_collision_print(final_node, screen, obstacles):
         count += 1
         pygame.draw.line(screen, GREEN, (current.x, current.y), (current.parent.x, current.parent.y), 3)
         current = current.parent  
-def gradient_descent_approx(b, obstacles):
-    b_copy = b[:]
-    for node in b[::-1]:
-        xs, ys, xe, ye = get_sampling_range(b.x, b.y, g_desc_rand)
-        for x in range(xs, xe):
-            for y in range(ys, ye):
-                pass
-                
-def cost_with_new_sample(node_to_replace, new_xy, branch):
-    desc = node_to_replace.get_descendents()
-    # Use copies so don't mess up any of the pointers and cost values of the original nodes
-    desc_c = [n.copy() for n in desc]
-    child = [n.copy() for n in list(node_to_replace.children)]
-    parent = node.parent.copy()
-    x,y = new_xy
-    for node in child:
-        pass
         
-    pass
-    
-def gradient_descent(b):
-    b_copy = b[:]
-    for node in b:
-        # Do the gradient descent
-        t = 1
-        while True: 
-            continue
-    for i in range(len(b)):
-        if b[i] != b_copy[i]:
-            # Update in nearest neighbor datastructure
-            continue
-    pass
 
 def isLeaf(node):
     if len(node.children) == 0:

@@ -117,5 +117,4 @@ def draw_dot(point, screen):
     circle = pygame.draw.circle(screen, BLUE, (point[0], point[1]), 1, 1)
     pygame.display.update(circle)
 
-def draw_polygon(points):
-    pass
+

@@ -2,7 +2,6 @@
 import pygame
 import sys
 
-from rrt import *
 from rrt_one_side import *
 from rrt_optimize_parent import *
 from drrt import *
@@ -94,8 +93,6 @@ while True:
             elif reset_button.collidepoint(pos):
                 # Reset relevant global variables
                 sampler.clear()
-                #START = sampler.sample()
-                #GOAL = sampler.sample()
                 root = Node(START[0], START[1], None)
                 end = Node(GOAL[0], GOAL[1], None)
                 tree = Tree(root)
@@ -134,7 +131,6 @@ while True:
                         corner_pressed = False
                     else:
                         rect = pygame.draw.rect(screen, BLUE, obst)
-                        #print(rect.topleft, rect.width, rect.height)
                         pygame.display.flip()
                         obstacles.add_obstacle(rect)
                         corner_pressed = False      

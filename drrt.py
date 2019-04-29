@@ -27,7 +27,6 @@ def drrt(screen, sampler, start, end, tree, obstacles):
 
 
     # Optimize the parent to be the nearest nbh that minimizes the total cost for the new node
-    # optimize_parent(temp, obstacles, tree)
     optimize_parent(temp, obstacles)
     tree.nodes.append(temp)
 
